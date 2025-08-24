@@ -8,10 +8,18 @@ import com.sky.result.Result;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 @Mapper
 public interface EmployeeMapper {
 
+    @Select("SELECT create_time, create_user, id, id_number, name, password, phone, sex, status, update_time, update_user, username from employee where id = #{id}")
+    Employee selectEmployeeById(Long id);
+    /**
+     *  分页查询
+     * @param employeePageQueryDTO
+     * @return
+     */
     Page<Employee> employeePageQuery(EmployeePageQueryDTO employeePageQueryDTO);
 
     /**
@@ -21,6 +29,8 @@ public interface EmployeeMapper {
      */
     @Select("select * from employee where username = #{username}")
     Employee getByUsername(String username);
+
+
 
     /**
      * 添加员工信息
@@ -32,4 +42,6 @@ public interface EmployeeMapper {
             "values"+
             "(#{name},#{username}, #{password},#{phone},#{sex},#{idNumber},#{status},#{createTime},#{updateTime},#{createUser},#{updateUser})")
      void insert(Employee employee);
+
+    void update(Employee employee);
 }
