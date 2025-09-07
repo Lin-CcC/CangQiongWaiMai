@@ -35,7 +35,7 @@ public class CategoryController {
     }
 
     @DeleteMapping()
-    public Result deleteById(int id){
+    public Result deleteById(long id){
         log.info("需要删除的分类id为：{}", id);
         categoryService.deleteById(id);
         return Result.success();
@@ -49,7 +49,7 @@ public class CategoryController {
     }
 
     @PostMapping("/status/{status}")
-    public Result changeStatus(@PathVariable int status, int id){
+    public Result changeStatus(@PathVariable int status, long id){
         log.info("更改的id为{}，状态为{}",id,status);
         categoryService.changeStatus(status, id);
         return Result.success();

@@ -13,7 +13,7 @@ public interface CategoryService {
 
     void modifyCategory(CategoryDTO categoryDTO);
 
-    void changeStatus(int status, int id);
+    void changeStatus(int status, long id);
 
     void addCategory(CategoryDTO categoryDTO);
 

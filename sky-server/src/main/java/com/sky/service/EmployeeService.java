@@ -10,7 +10,9 @@ import com.sky.result.Result;
 public interface EmployeeService {
 
     void editEmployee(EmployeeDTO employeeDTO);
+
     Employee selectEmployeeById(Long id);
+
     void setStatus(Integer status, Long id);
 
     /**

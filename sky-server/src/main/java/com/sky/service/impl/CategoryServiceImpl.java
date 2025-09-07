@@ -2,9 +2,7 @@ package com.sky.service.impl;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
-import com.google.gson.annotations.Until;
 import com.sky.constant.MessageConstant;
-import com.sky.context.BaseContext;
 import com.sky.dto.CategoryDTO;
 import com.sky.dto.CategoryPageQueryDTO;
 import com.sky.entity.Category;
@@ -13,15 +11,11 @@ import com.sky.mapper.CategoryMapper;
 import com.sky.mapper.DishMapper;
 import com.sky.mapper.SetmealMapper;
 import com.sky.result.PageResult;
-import com.sky.result.Result;
 import com.sky.service.CategoryService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Locale;
 
 @Service
 public class CategoryServiceImpl implements CategoryService {
@@ -67,7 +61,10 @@ public class CategoryServiceImpl implements CategoryService {
      */
     @Override
     public void modifyCategory(CategoryDTO categoryDTO) {
-        categoryMapper.modifyCategory(categoryDTO);
+        //
+        Category category = new Category();
+       BeanUtils.copyProperties(categoryDTO, category);
+        categoryMapper.modifyCategory(category);
     }
 
     /**
@@ -76,8 +73,10 @@ public class CategoryServiceImpl implements CategoryService {
      * @param id
      */
     @Override
-    public void changeStatus(int status, int id) {
-        categoryMapper.changeStatus(status, id);
+    public void changeStatus(int status, long id) {
+        //
+        Category category = Category.builder().status(status).id(id).build();
+        categoryMapper.changeStatus(category);
     }
 
     /**
@@ -87,10 +86,10 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public void addCategory(CategoryDTO categoryDTO) {
         Category category = Category.builder()
-                .createTime(LocalDateTime.now())
-                        .updateTime(LocalDateTime.now())
-                                .createUser(BaseContext.getCurrentId())
-                                        .updateUser(BaseContext.getCurrentId())
+//                .createTime(LocalDateTime.now())
+//                        .updateTime(LocalDateTime.now())
+//                                .createUser(BaseContext.getCurrentId())
+//                                        .updateUser(BaseContext.getCurrentId())
                                                 .status(0)
                                                         .build();
         BeanUtils.copyProperties(categoryDTO, category);

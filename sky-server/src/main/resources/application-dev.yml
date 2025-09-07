@@ -6,3 +6,12 @@ sky:
     database: sky_take_out
     username: root
     password: 123456
+  alioss:
+    #地域节点（指定连接到阿里云 OSS 的具体区域节点）
+    endpoint: oss-cn-beijing.aliyuncs.com
+    #阿里云账号的访问密钥 ID，是识别访问者身份的唯一标识（类似 “用户名”）
+    access-key-id: ${ALIYUN_ACCESS_KEY_ID}
+    #阿里云账号的访问密钥密钥，是与accessKeyId对应的 “密码”，用于验证身份的真实性
+    access-key-secret: ${ALIYUN_ACCESS_KEY_SECRET}
+    #OSS 中的存储空间名称，是 OSS 中用于存储数据的 “容器”（类似本地文件夹，但具有全局唯一性）
+    bucket-name: sky-take-out0158
