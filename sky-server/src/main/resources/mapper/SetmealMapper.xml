@@ -2,4 +2,64 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.sky.mapper.SetmealMapper">
     <!--namespace根据自己需要创建的的mapper的路径和名称填写-->
+
+    <resultMap id="setmealVOResultMap" type="com.sky.vo.SetmealVO">
+        <id property="id" column="id"/>
+        <result property="price" column="price"/>
+        <result property="image" column="image"/>
+        <result property="categoryId" column="category_id"/>
+        <result property="name" column="name"/>
+        <result property="description" column="description"/>
+        <result property="status" column="status"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="categoryName" column="category_name"/>
+
+        <collection property="setmealDishes"
+                    ofType="com.sky.entity.SetmealDish"
+                    javaType="java.util.List">
+            <id property="id" column="setmeal_dish_id"/>
+            <result property="name" column="setmeal_dish_name"/>
+            <result property="price" column="setmeal_dish_price"/>
+            <result property="dishId" column="dishId"/>
+            <result property="copies" column="copies"/>
+            <result property="setmealId" column="setmeal_id"/>
+        </collection>
+    </resultMap>
+    
+    <insert id="add" keyProperty="id" useGeneratedKeys="true">
+        insert into setmeal (category_id, name, price, status, description, image, create_time, update_time, create_user, update_user)
+        values (#{categoryId}, #{name}, #{price}, #{status}, #{description}, #{image}, #{createTime}, #{updateTime}, #{createUser}, #{updateUser})
+    </insert>
+    
+    <update id="modify">
+        update setmeal
+        <set>
+            <if test="name != null">name = #{name},</if>
+            <if test="categoryId != null">category_id = #{categoryId},</if>
+            <if test="price != null">price = #{price},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="description != null">description = #{description},</if>
+            <if test="image != null">image = #{image},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="updateUser != null">update_user = #{updateUser},</if>
+        </set>
+            where id = #{id}
+    </update>
+    <delete id="deleteById">
+        delete from setmeal where id in
+        <foreach collection="ids" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="pageQuery" resultType="com.sky.vo.SetmealVO">
+        select setmeal.*, category.name as categoryName from setmeal left outer join category on setmeal.category_id = category.id
+        <where>
+            <if test="categoryId != null">and category_id = #{categoryId}</if>
+            <if test="name != null and name != ''">and setmeal.name like concat('%', #{name}, '%')</if>
+            <if test="status != null">and setmeal.status = #{status}</if>
+        </where>
+        order by update_time desc
+    </select>
+
 </mapper>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sky.mapper.SetmealDishMapper">
+    <!--namespace根据自己需要创建的的mapper的路径和名称填写-->
+
+    <insert id="insertBatch">
+        insert into setmeal_dish (id, setmeal_id, dish_id, name, price, copies)
+        VALUES
+            <foreach collection="setmealDishes" item="dish" separator=",">
+                (#{dish.id}, #{dish.setmealId}, #{dish.dishId}, #{dish.name}, #{dish.price}, #{dish.copies})
+            </foreach>
+    </insert>
+
+    <delete id="deleteById">
+        delete from setmeal_dish where setmeal_id in
+        <foreach collection="ids" open="(" separator="," close=")" item="id">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="hasMealConnect" resultType="java.lang.Integer">
+        select count(*) from setmeal_dish where dish_id in
+        <foreach collection="id" open="(" separator="," close=")" item="id">
+            #{id}
+        </foreach>
+    </select>
+</mapper>
