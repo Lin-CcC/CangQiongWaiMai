@@ -35,14 +35,15 @@ public class UserController {
     @PostMapping("/login")
     public Result<UserLoginVO> login(@RequestBody UserLoginDTO userLoginDTO){
         User user = userService.login(userLoginDTO);
+
         Map<String, Object> claims = new HashMap<>();
         claims.put(JwtClaimsConstant.USER_ID, user.getId());
-        String jwt = JwtUtil.createJWT(jwtProperties.getAdminSecretKey(), jwtProperties.getUserTtl(), claims);
+        String token = JwtUtil.createJWT(jwtProperties.getUserSecretKey(), jwtProperties.getUserTtl(), claims);
 
         UserLoginVO userLoginVO = UserLoginVO.builder()
                 .openid(user.getOpenid())
                 .id(user.getId())
-                .token(jwt)
+                .token(token)
                 .build();
         return Result.success(userLoginVO);
     }
