@@ -13,6 +13,7 @@ import com.sky.mapper.SetmealDishMapper;
 import com.sky.mapper.SetmealMapper;
 import com.sky.result.PageResult;
 import com.sky.service.SetmealService;
+import com.sky.vo.DishItemVO;
 import com.sky.vo.SetmealVO;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.util.PropertySource;
@@ -95,5 +96,17 @@ public class SetmealServiceImpl implements SetmealService {
         });
         setmealDishMapper.deleteById(ids);
         setmealMapper.deleteById(ids);
+    }
+
+    @Override
+    public List<Setmeal> list(long categoryId) {
+        List<Setmeal> setmeals = setmealMapper.list(categoryId);
+        return setmeals;
+    }
+
+    @Override
+    public List<DishItemVO> selectBySetmealId(Long id) {
+        List<DishItemVO> dishItemVOList = setmealMapper.selectBySetmealId(id);
+        return dishItemVOList;
     }
 }

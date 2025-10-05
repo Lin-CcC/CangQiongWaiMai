@@ -6,6 +6,7 @@ import com.sky.dto.SetmealDTO;
 import com.sky.dto.SetmealPageQueryDTO;
 import com.sky.entity.Setmeal;
 import com.sky.enumeration.OperationType;
+import com.sky.vo.DishItemVO;
 import com.sky.vo.SetmealVO;
 import org.apache.ibatis.annotations.*;
 
@@ -38,4 +39,10 @@ public interface SetmealMapper {
     void modify(Setmeal setmeal);
 
     void deleteById(List<Long> ids);
+
+    @Select("select * from setmeal where category_id = #{categoryId}")
+    List<Setmeal> list(long categoryId);
+
+    @Select("select dish.description, dish.image, setmeal_dish.name, setmeal_dish.copies from setmeal_dish left outer join dish on setmeal_dish.dish_id = dish.id where setmeal_dish.setmeal_id = #{id}")
+    List<DishItemVO> selectBySetmealId(Long id);
 }

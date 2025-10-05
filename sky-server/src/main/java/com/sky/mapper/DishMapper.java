@@ -7,6 +7,7 @@ import com.sky.dto.DishPageQueryDTO;
 import com.sky.entity.Dish;
 import com.sky.entity.DishFlavor;
 import com.sky.enumeration.OperationType;
+import com.sky.vo.DishItemVO;
 import com.sky.vo.DishVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.ResultMap;
@@ -48,4 +49,8 @@ public interface DishMapper {
 
     @AutoFill(operationType = OperationType.UPDATE)
     void modify(Dish dish);
+
+    @Select("select dish.*, dish_flavor.id as flavor_id, dish_flavor.name as flavor_name, dish_flavor.value as flavor_value, dish_flavor.dish_id from dish left outer join dish_flavor on dish.id = dish_flavor.dish_id where dish.category_id = #{categoryId}")
+    @ResultMap("DishVOResultMap")
+    List<DishVO> list(Long categoryId);
 }

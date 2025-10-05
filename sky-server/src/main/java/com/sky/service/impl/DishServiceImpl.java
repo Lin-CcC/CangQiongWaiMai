@@ -14,6 +14,7 @@ import com.sky.mapper.SetmealDishMapper;
 import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.DishService;
+import com.sky.vo.DishItemVO;
 import com.sky.vo.DishVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -112,4 +113,11 @@ public class DishServiceImpl implements DishService {
         BeanUtils.copyProperties(dishDTO, dish);
         dishMapper.modify(dish);
     }
+
+    @Override
+    public List<DishVO> list(Long categoryId) {
+        List<DishVO> dishVOList = dishMapper.list(categoryId);
+        return dishVOList;
+    }
+
 }

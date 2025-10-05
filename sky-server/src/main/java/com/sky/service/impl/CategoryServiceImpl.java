@@ -107,4 +107,10 @@ public class CategoryServiceImpl implements CategoryService {
         Category category = Category.builder().type(type).build();
         return categoryMapper.searchCategory(category);
     }
+
+    @Override
+    public List<Category> list(Integer type) {
+        Category category = Category.builder().type(type).build();
+        return categoryMapper.searchCategory(category);
+    }
 }
