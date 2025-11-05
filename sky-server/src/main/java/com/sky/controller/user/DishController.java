@@ -8,6 +8,7 @@ import com.sky.vo.DishItemVO;
 import com.sky.vo.DishVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,11 +22,21 @@ import java.util.List;
 public class DishController {
     @Autowired
     DishService dishService;
-
+    @Autowired
+    RedisTemplate redisTemplate;
     @GetMapping("/list")
     public Result<List<DishVO>> list(Long categoryId){
-        List<DishVO> dishVOList = dishService.list(categoryId);
-        log.info("当前菜品的列表为：{}", dishVOList);
-        return Result.success(dishVOList);
+        //判断本地是否有缓存，有则直接在缓存中查询，没有就查询数据库，然后将查出来的数据放到缓存里
+        //redis是键值对，key-value，要构造一个key，key是String类型
+        String key = "dish_" + categoryId;
+        List<DishVO> list = (List<DishVO>) redisTemplate.opsForValue().get(key);
+        if (list != null && list.size() > 0){
+            return Result.success(list);
+        }
+        //没有查到
+        list = dishService.list(categoryId);
+        log.info("当前菜品的列表为：{}", list);
+        redisTemplate.opsForValue().set(key, list);
+        return Result.success(list);
     }
 }
