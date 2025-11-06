@@ -6,6 +6,8 @@ import com.sky.service.SetmealService;
 import com.sky.vo.DishItemVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +23,7 @@ public class SetmealController {
     @Autowired
     SetmealService setmealService;
 
+    @Cacheable(cacheNames = "setmealCache", key = "#categoryId")
     @GetMapping("/list")
     public Result<Setmeal[]> listOfUser(long categoryId){
         List<Setmeal> setmeals = setmealService.list(categoryId);
