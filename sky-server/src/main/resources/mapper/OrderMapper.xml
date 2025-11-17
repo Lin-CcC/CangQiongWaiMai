@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sky.mapper.OrderMapper">
+    <!--namespace根据自己需要创建的的mapper的路径和名称填写-->
+    <insert id="add" keyProperty="id" useGeneratedKeys="true">
+        insert into orders
+        (id, number, status, user_id, address_book_id, order_time, pay_method, pay_status, amount,
+         remark, phone, address, consignee, cancel_time,
+         delivery_status, pack_amount, tableware_number, tableware_status)
+        VALUES
+        (#{id}, #{number}, #{status}, #{userId}, #{addressBookId},#{orderTime}, #{payMethod},
+         #{payStatus}, #{amount}, #{remark}, #{phone}, #{address}, #{consignee},#{cancelTime},
+         #{deliveryStatus},
+         #{packAmount}, #{tablewareNumber}, #{tablewareStatus})
+    </insert>
+</mapper>
