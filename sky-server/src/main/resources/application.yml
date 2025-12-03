@@ -55,6 +55,7 @@ sky:
       access-key-secret: ${sky.alioss.access-key-secret}
       #OSS 中的存储空间名称，是 OSS 中用于存储数据的 “容器”（类似本地文件夹，但具有全局唯一性）
       bucket-name: ${sky.alioss.bucket-name}
+
   wechat:
     appid: ${sky.wechat.appid}
     secret: ${sky.wechat.secret}
@@ -66,3 +67,9 @@ sky:
     we-chat-pay-cert-file-path: ${sky.wechat.we-chat-pay-cert-file-path}
     notify-url: ${sky.wechat.notify-url}
     refund-notify-url: ${sky.wechat.notify-url}
+
+  baidu:
+    ak: ${sky.baidu.ak}
+
+  shop:
+    address: ${sky.shop.address}

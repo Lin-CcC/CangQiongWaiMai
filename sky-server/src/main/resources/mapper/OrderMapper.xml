@@ -2,16 +2,58 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.sky.mapper.OrderMapper">
     <!--namespace根据自己需要创建的的mapper的路径和名称填写-->
+    <resultMap id="OrderVOResultMap" type="com.sky.vo.OrderVO">
+        <id property="id" column="id"/>
+        <result property="number" column="number"/>
+        <result property="status" column="status"/>
+        <result property="userId" column="user_id"/>
+        <result property="orderTime" column="order_time"/>
+        <result property="addressBookId" column="address_book_id"/>
+        <result property="checkoutTime" column="checkout_time"/>
+        <result property="payMethod" column="pay_method"/>
+        <result property="payStatus" column="pay_status"/>
+        <result property="amount" column="amount"/>
+        <result property="remark" column="remark"/>
+        <result property="phone" column="phone"/>
+        <result property="address" column="address"/>
+        <result property="userName" column="user_name"/>
+        <result property="consignee" column="consignee"/>
+        <result property="cancelReason" column="cancel_reason"/>
+        <result property="rejectionReason" column="rejection_reason"/>
+        <result property="cancelTime" column="cancel_time"/>
+        <result property="estimatedDeliveryTime" column="estimated_delivery_time"/>
+        <result property="deliveryStatus" column="delivery_status"/>
+        <result property="deliveryTime" column="delivery_time"/>
+        <result property="packAmount" column="pack_amount"/>
+        <result property="tablewareNumber" column="tableware_number"/>
+        <result property="tablewareStatus" column="tableware_status"/>
+        <result property="orderDishes" column="order_dishes"/>
+
+        <collection property="orderDetailList"
+                    ofType="com.sky.entity.OrderDetail"
+                    javaType="java.util.List">
+            <id property="id" column="od_id"/>  <!-- 对应 SQL 中的 od.id as od_id -->
+            <result property="name" column="od_name"/>  <!-- 对应 od.name as od_name -->
+            <result property="image" column="od_image"/>  <!-- 对应 od.image as od_image -->
+            <result property="orderId" column="od_order_id"/>  <!-- 对应 od.order_id as od_order_id -->
+            <result property="dishId" column="od_dish_id"/>  <!-- 对应 od.dish_id as od_dish_id -->
+            <result property="setmealId" column="od_setmeal_id"/>  <!-- 对应 od.setmeal_id as od_setmeal_id -->
+            <result property="dishFlavor" column="od_dish_flavor"/>  <!-- 对应 od.dish_flavor as od_dish_flavor -->
+            <result property="amount" column="od_amount"/>  <!-- 对应 od.amount as od_amount -->
+            <result property="number" column="od_number"/>  <!-- 对应 od.number as od_number -->
+        </collection>
+    </resultMap>
+
     <insert id="add" keyProperty="id" useGeneratedKeys="true">
         insert into orders
         (id, number, status, user_id, address_book_id, order_time, pay_method, pay_status, amount,
          remark, phone, address, consignee, cancel_time,
          delivery_status, pack_amount, tableware_number, tableware_status)
         VALUES
-        (#{id}, #{number}, #{status}, #{userId}, #{addressBookId},#{orderTime}, #{payMethod},
-         #{payStatus}, #{amount}, #{remark}, #{phone}, #{address}, #{consignee},#{cancelTime},
-         #{deliveryStatus},
-         #{packAmount}, #{tablewareNumber}, #{tablewareStatus})
+            (#{id}, #{number}, #{status}, #{userId}, #{addressBookId},#{orderTime}, #{payMethod},
+             #{payStatus}, #{amount}, #{remark}, #{phone}, #{address}, #{consignee},#{cancelTime},
+             #{deliveryStatus},
+             #{packAmount}, #{tablewareNumber}, #{tablewareStatus})
     </insert>
 
     <update id="update" parameterType="com.sky.entity.Orders">
@@ -44,4 +86,67 @@
         </set>
         where id = #{id}
     </update>
+
+    <update id="changeStatus">
+        update orders
+<set>
+    <if test="status != null">status = #{status},</if>
+    <if test="cancelReason != null">cancel_reason = #{cancelReason},</if>
+        <if test="rejectionReason != null">rejection_reason = #{rejectionReason},</if>
+        </set>
+where id = #{id}
+</update>
+
+    <select id="conditionSearch" resultMap="OrderVOResultMap">
+        select  o.*,
+        od.id as od_id,
+        od.name as od_name,
+        od.image as od_image,
+        od.order_id as od_order_id,
+        od.dish_id as od_dish_id,
+        od.setmeal_id as od_setmeal_id,
+        od.dish_flavor as od_dish_flavor,
+        od.amount as od_amount,
+        od.number as od_number
+        from (
+        <!-- 内层子查询：只对订单表分页，确保每页是唯一订单 -->
+        select * from orders
+        <where>
+            <if test="beginTime != null and endTime != null">and order_time between #{beginTime} and #{endTime}</if>
+            <if test="number != null and number != ''">and number like concat('%', #{number}, '%')</if>
+            <if test="phone != null and phone != ''">and phone like concat('%', #{phone}, '%')</if>
+            <if test="status != null">and status = #{status}</if>
+        </where>
+        <!-- 手动分页：LIMIT 每页条数 OFFSET 偏移量（DTO 自动计算） -->
+        LIMIT #{pageSize} OFFSET #{offset}
+        ) o
+        <!-- 外层关联订单项：只关联分页后的订单，无重复记录 -->
+        left outer join order_detail od on o.id = od.order_id
+    </select>
+
+    <!-- 2. 统计总条数：只查订单表，确保总条数是唯一订单数 -->
+    <select id="countOrders" resultType="java.lang.Long">
+        select count(1) from orders
+        <where>
+            <!-- 条件和分页查询一致，确保统计准确 -->
+            <if test="beginTime != null and endTime != null">and order_time between #{beginTime} and #{endTime}</if>
+            <if test="number != null and number != ''">and number like concat('%', #{number}, '%')</if>
+            <if test="phone != null and phone != ''">and phone like concat('%', #{phone}, '%')</if>
+            <if test="status != null">and status = #{status}</if>
+        </where>
+    </select>
+
+    <select id="orderDetailById" resultMap="OrderVOResultMap">
+        select o.*,
+               od.amount as od_amount,
+               od.dish_flavor as od_dish_flavor,
+               od.dish_id as od_dish_id,
+               od.id as od_id,
+               od.image as od_image,
+               od.name as od_name,
+               od.number as od_number,
+               od.order_id as od_order_id,
+               od.setmeal_id as od_setmeal_id
+        from orders o left outer join order_detail od on o.id = od.order_id where o.id = #{id}
+    </select>
 </mapper>
